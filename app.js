@@ -52,22 +52,22 @@ document.addEventListener("keydown", function(event) {
 })
 
 //draw everything to the canvas
-
 function draw () {
     ctx.drawImage(ground, 0,0);
 
-    for( let i = 0; i < snake.length ; i++){
+    for(let i = 0; i < snake.length ; i++){
         if (i == 0) {
-            ctx.fillStyle = "green";
+            ctx.fillStyle = "blue";
         }
         else {
             ctx.fillStyle = "white";
         }
         ctx.fillRect(snake[i].x,snake[i].y,box,box);
-      
-        ctx.strokeStyle = "red";
-        ctx.strokeRect(snake[i].x,snake[i].y,box,box);
+  /*    
+        ctx.arc(snake[i].x, snake[i].y, 16, 0, 2*Math.PI, false);
+      */
     }
+
 
     ctx.drawImage(foodImg,foodPosition.x,foodPosition.y);
     
@@ -75,10 +75,18 @@ function draw () {
     let snakeX = snake[0].x;
     let snakeY = snake[0].y;
 
-    if( d == "LEFT") snakeX -= box;
-    if( d == "UP") snakeY -= box;
-    if( d == "RIGHT") snakeX += box;
-    if( d == "DOWN") snakeY += box;
+    if (diration == "LEFT"){
+        snakeX -= box; 
+    } 
+    else if (diration == "UP") {
+        snakeY -= box;
+    }
+    else if (diration == "RIGHT") {
+        snakeX += box;
+    }
+    else if (diration == "DOWN") {
+        snakeY += box;
+    }
     
     // if the snake eats the food
     if(snakeX == foodPosition.x && snakeY == foodPosition.y){
@@ -86,10 +94,11 @@ function draw () {
         let eat = new Audio();
         eat.src = "sounds/audio_eat.mp3";
         eat.play();
-        food = {
+        foodPosition = {
             x : Math.floor(Math.random()*17+1) * box,
-            y : Math.floor(Math.random()*15+3) * box
+            y : Math.floor(Math.random()*15+3) * box,
         }
+
         // we don't remove the tail
     }else{
         // remove the tail
@@ -100,13 +109,21 @@ function draw () {
     
     let newHead = {
         x : snakeX,
-        y : snakeY
+        y : snakeY,
     }
-    
     snake.unshift(newHead);
 
+    if (snakeX < box || snakeX > 17*box || snakeY < 3*box || snakeY > 17*box) {
+        let gameOver = "Game Over";
+        let dead = new Audio();
+        dead.src = "sounds/audio_dead.mp3";
+        ctx.fillStyle = "red";
+        ctx.fillText(gameOver,6*box, 10*box);
+        setTimeout(draw); //fortsätter räkna
+    }
+
     ctx.fillStyle = "white";
-    ctx.font = "45px Changa one";
+    ctx.font = "45px Oswald"; //change font
     ctx.fillText(score, 2*box, 1.6*box);
 }
 
