@@ -16,12 +16,12 @@ function getColor() {
     let color = "";
     let makeColor = ["red", "blue", "yellow", "pink", "purple", "white", "black", "aqua", "orange"];
     for (let i = 0; i < makeColor.length ; i++) {
-       color = color + makeColor[Math.random() * makeColor.length];
+       color = makeColor[Math.random() * makeColor.length-1];
     }
-    return (code);
+    return (color);
 }
 
-const snake = new Snake(getColorCode(), []);
+const snake = new Snake(getColor(), []);
 
 //create the units
 const square = 32;
@@ -35,8 +35,25 @@ const foodImg = new Image();
 foodImg.src = "images/food.png";
 
 const snakeHead = new Image();
-snakeHead.src = "images/snakeHead.png";
-snakeHead.width = "32px"; //how to change size.
+snakeHead.src = "images/snakeHead.jpg"; //ritas inte
+
+const left = new Audio();
+left.src = "sounds/audio_left.mp3";
+
+const right = new Audio();
+right.src = "sounds/audio_right.mp3";
+
+const up = new Audio();
+up.src = "sounds/audio_up.mp3";
+
+const down = new Audio();
+down.src = "sounds/audio_down.mp3";
+
+const dead = new Audio();
+dead.src = "sounds/audio_dead.mp3";
+
+const eat = new Audio();
+eat.src = "sounds/audio_eat.mp3";
 
 //position of the head of the snake
 
@@ -67,12 +84,16 @@ document.addEventListener("keydown", function(event) {
     let key = event.key;
     if(key == "ArrowLeft" && directions !== "Right"){
         directions = "Left";
+        left.play();
     }else if(key == "ArrowUp" && directions !== "Down"){
         directions = "Up";
+        up.play();
     }else if(key == "ArrowRight" && directions !== "Left"){
         directions = "Right";
+        right.play();
     }else if(key == "ArrowDown" && directions !== "Up"){
         directions = "Down";
+        down.play();
    }
 })
 
@@ -96,9 +117,9 @@ function game() {
     } 
 
     //create the snake
-
     for (let i = 0; i < snake.length.length; i++) {
         ctx.beginPath();
+        ctx.drawImage(snakeHead, snake.length[0].x, snake.length[0].y)
         ctx.rect(snake.length[i].x, snake.length[i].y, square, square)
         ctx.fillStyle = snake.color;
         ctx.fill();
@@ -109,6 +130,7 @@ function game() {
 
     if (snake.length[0].x === foodPosition.x && snake.length[0].y === foodPosition.y) {
         score+=1
+        eat.play();
         let newPart = {
             x: oldHeadX,
             y: oldHeadY,
@@ -131,8 +153,9 @@ function game() {
     } 
 
     
-    if (snake.length[0].x > 18*square || snake.length[0].x < square || snake.length[0].y > 18*square || snake.length[0].y < 3*square) {
+    if (snake.length[0].x > 17*square || snake.length[0].x < square || snake.length[0].y > 17*square || snake.length[0].y < 3*square) {
         console.log("gameOver");
+        dead.play();
     }
     //canvas.width canvas.hight
     //maybe change background shop
