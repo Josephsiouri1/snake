@@ -2,8 +2,30 @@ const canvas = document.getElementById("canvas");
 
 const ctx = canvas.getContext("2d");
 
-//create the unit
-const box = 32;
+//identify snake
+
+class Snake {
+    constructor(color, length) {
+         this.color = color;
+         this.length = length;
+    }
+}
+
+
+function getColor() {
+    let color = "";
+    let makeColor = ["red", "blue", "yellow", "pink", "purple", "white", "black", "aqua", "orange"];
+    for (let i = 0; i < makeColor.length ; i++) {
+       color = color + makeColor[Math.random() * makeColor.length];
+    }
+    return (code);
+}
+
+const snake = new Snake(getColorCode(), []);
+
+//create the units
+const square = 32;
+
 //load image
 
 const ground = new Image();
@@ -11,24 +33,26 @@ ground.src = "images/ground.png";
 
 const foodImg = new Image();
 foodImg.src = "images/food.png";
-foodImg.style.width = "32px"
 
-//höja bredden på ormen "bilden"
+const snakeHead = new Image();
+snakeHead.src = "images/snakeHead.png";
+snakeHead.width = "32px"; //how to change size.
 
-//create the snake
+//position of the head of the snake
 
-let snake = [];
-
-snake[0] = {
-    x: 9*box,
-    y: 10*box,
+snake.length[0] = {
+    x: 5*square,
+    y: 10*square,
 }
+// create the snake position in the beginning.
 
-// create the food
+oldHeadX = snake.length[0].x;
+oldHeadY = snake.length[0].y;
+// create the food position in the beginning.
 
 let foodPosition =  {
-    x: Math.floor(Math.random()*17+1)*box,
-    y: Math.floor(Math.random()*15+3)*box,
+    x: 14*square,
+    y: 10*square,
 }
 
 //create the score var
@@ -36,97 +60,87 @@ let foodPosition =  {
 let score = 0;
 
 //control the snake
-let diration;
+let directions;
+
+
 document.addEventListener("keydown", function(event) {
     let key = event.key;
-    if(key == "ArrowLeft" && diration !== "RIGHT"){
-        diration = "LEFT";
-    }else if(key == "ArrowUp" && diration !== "DOWN"){
-        diration = "UP";
-    }else if(key == "ArrowRight" && diration !== "LEFT"){
-        diration = "RIGHT";
-    }else if(key == "ArrowDown" && diration !== "UP"){
-        diration = "DOWN";
-    }
-
+    if(key == "ArrowLeft" && directions !== "Right"){
+        directions = "Left";
+    }else if(key == "ArrowUp" && directions !== "Down"){
+        directions = "Up";
+    }else if(key == "ArrowRight" && directions !== "Left"){
+        directions = "Right";
+    }else if(key == "ArrowDown" && directions !== "Up"){
+        directions = "Down";
+   }
 })
 
 //draw everything to the canvas
-function draw () {
+function game() {
+
+    ctx.clearRect(0, 0, innerWidth, innerHeight);
+
     ctx.drawImage(ground, 0,0);
 
-    for(let i = 0; i < snake.length ; i++){
-        if (i == 0) {
-            ctx.fillStyle = "blue";
-        }
-        else {
-            ctx.fillStyle = "white";
-        }
-        ctx.fillRect(snake[i].x,snake[i].y,box,box);
-  /*    
-        ctx.arc(snake[i].x, snake[i].y, 16, 0, 2*Math.PI, false);
-      */
-    }
+    ctx.drawImage(foodImg, foodPosition.x, foodPosition.y);
 
-
-    ctx.drawImage(foodImg,foodPosition.x,foodPosition.y);
-    
-    //old head position
-    let snakeX = snake[0].x;
-    let snakeY = snake[0].y;
-
-    if (diration == "LEFT"){
-        snakeX -= box; 
+    if (directions === "Up") {
+        snake.length[0].y = snake.length[0].y - square;
+    }else if (directions === "Down") {
+        snake.length[0].y = snake.length[0].y + square;
+    } else if (directions === "Right") {
+        snake.length[0].x = snake.length[0].x + square;
+    } else if (directions === "Left") {
+        snake.length[0].x = snake.length[0].x - square;
     } 
-    else if (diration == "UP") {
-        snakeY -= box;
+
+    //create the snake
+
+    for (let i = 0; i < snake.length.length; i++) {
+        ctx.beginPath();
+        ctx.rect(snake.length[i].x, snake.length[i].y, square, square)
+        ctx.fillStyle = snake.color;
+        ctx.fill();
     }
-    else if (diration == "RIGHT") {
-        snakeX += box;
-    }
-    else if (diration == "DOWN") {
-        snakeY += box;
-    }
-    
-    // if the snake eats the food
-    if(snakeX == foodPosition.x && snakeY == foodPosition.y){
-        score++
-        let eat = new Audio();
-        eat.src = "sounds/audio_eat.mp3";
-        eat.play();
-        foodPosition = {
-            x : Math.floor(Math.random()*17+1) * box,
-            y : Math.floor(Math.random()*15+3) * box,
+
+
+    //ctx.moveTo(newHeadX,newHeadY);
+
+    if (snake.length[0].x === foodPosition.x && snake.length[0].y === foodPosition.y) {
+        score+=1
+        let newPart = {
+            x: oldHeadX,
+            y: oldHeadY,
         }
-
-        // we don't remove the tail
-    }else{
-        // remove the tail
-        snake.pop();
+        snake.length.unshift(newPart);
+        foodPosition =  {
+            x: Math.round(Math.random()*16+1)*square,
+            y: Math.round(Math.random()*14+3)*square,
+        }
     }
+
+    if (directions === "Up") {
+        oldHeadY = oldHeadY - square
+    }else if (directions === "Down") {
+        oldHeadY = oldHeadY + square
+    } else if (directions === "Right") {
+        oldHeadX = oldHeadX + square
+    } else if (directions === "Left") {
+        oldHeadX = oldHeadX - square
+    } 
+
     
-    // add new Head
-    
-    let newHead = {
-        x : snakeX,
-        y : snakeY,
+    if (snake.length[0].x > 18*square || snake.length[0].x < square || snake.length[0].y > 18*square || snake.length[0].y < 3*square) {
+        console.log("gameOver");
     }
-    snake.unshift(newHead);
+    //canvas.width canvas.hight
+    //maybe change background shop
 
-    if (snakeX < box || snakeX > 17*box || snakeY < 3*box || snakeY > 17*box) {
-        let gameOver = "Game Over";
-        let dead = new Audio();
-        dead.src = "sounds/audio_dead.mp3";
-        ctx.fillStyle = "red";
-        ctx.fillText(gameOver,6*box, 10*box);
-        setTimeout(draw); //fortsätter räkna
-    }
-
-    ctx.fillStyle = "white";
-    ctx.font = "45px Oswald"; //change font
-    ctx.fillText(score, 2*box, 1.6*box);
+    ctx.font = "40px Verdana";
+    ctx.fillStyle = "white"
+    ctx.fillText(score, 3*square, 1.6*square)
 }
 
 //call draw function every 100ms
-
-let game = setInterval(draw, 100);
+setInterval(game, 150);
