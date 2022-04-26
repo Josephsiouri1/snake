@@ -5,9 +5,9 @@ const ctx = canvas.getContext("2d");
 //identify snake
 
 class Snake {
-    constructor(color, length) {
+    constructor(color, figure) {
          this.color = color;
-         this.length = length;
+         this.figure = figure;
     }
 }
 
@@ -15,9 +15,7 @@ class Snake {
 function getColor() {
     let color = "";
     let makeColor = ["red", "blue", "yellow", "pink", "purple", "white", "black", "aqua", "orange"];
-    for (let i = 0; i < makeColor.length ; i++) {
-       color = makeColor[Math.random() * makeColor.length-1];
-    }
+    color = makeColor[Math.random() * makeColor.length-1];
     return (color);
 }
 
@@ -57,28 +55,28 @@ eat.src = "sounds/audio_eat.mp3";
 
 //position of the head of the snake
 
-snake.length[0] = {
+snake.figure[0] = {
     x: 5*square,
     y: 10*square,
+    next: null,
 }
-// create the snake position in the beginning.
+let snakeIndex = 0; //the index of every part in the snake array.
 
-oldHeadX = snake.length[0].x;
-oldHeadY = snake.length[0].y;
+let j = 0; //count the number of snake parts, begins with one part.
+
+let eatenApple = false; //in the beginning it controls if the snake ate the an apple to uppdate new snake parts.
+
 // create the food position in the beginning.
-
 let foodPosition =  {
     x: 14*square,
     y: 10*square,
 }
 
 //create the score var
-
 let score = 0;
 
 //control the snake
 let directions;
-
 
 document.addEventListener("keydown", function(event) {
     let key = event.key;
@@ -96,7 +94,6 @@ document.addEventListener("keydown", function(event) {
         down.play();
    }
 })
-
 //draw everything to the canvas
 function game() {
 
@@ -105,42 +102,98 @@ function game() {
     ctx.drawImage(ground, 0,0);
 
     ctx.drawImage(foodImg, foodPosition.x, foodPosition.y);
-
+    
+    //movment of the snake head.
     if (directions === "Up") {
-        snake.length[0].y = snake.length[0].y - square;
+        snake.figure[0].y = snake.figure[0].y - square;
     }else if (directions === "Down") {
-        snake.length[0].y = snake.length[0].y + square;
+        snake.figure[0].y = snake.figure[0].y + square;
     } else if (directions === "Right") {
-        snake.length[0].x = snake.length[0].x + square;
+        snake.figure[0].x = snake.figure[0].x + square;
     } else if (directions === "Left") {
-        snake.length[0].x = snake.length[0].x - square;
+        snake.figure[0].x = snake.figure[0].x - square;
     } 
 
     //create the snake
-    for (let i = 0; i < snake.length.length; i++) {
+    for (let i = 0; i < snake.figure.length; i++) {
+        /*
         ctx.beginPath();
-        ctx.drawImage(snakeHead, snake.length[0].x, snake.length[0].y)
-        ctx.rect(snake.length[i].x, snake.length[i].y, square, square)
+        ctx.drawImage(snakeHead, snake.figure[0].x, snake.figure[0].y)
+        ctx.rect(snake.figure[i].x, snake.figure[i].y, square, square)
+        ctx.fillStyle = snake.color;
+        ctx.fill();
+        */
+    }
+
+    if (snake.figure[0].next === null) {
+        ctx.beginPath();
+        ctx.rect(snake.figure[0].x, snake.figure[0].y, square, square);
         ctx.fillStyle = snake.color;
         ctx.fill();
     }
+ 
+    let snakePartPositions = [];
+    
+    while (snake.figure[j].next !== null) {
 
-
-    //ctx.moveTo(newHeadX,newHeadY);
-
-    if (snake.length[0].x === foodPosition.x && snake.length[0].y === foodPosition.y) {
-        score+=1
-        eat.play();
-        let newPart = {
-            x: oldHeadX,
-            y: oldHeadY,
+        snakePart = {
+            x: snake.figure[j].next.x,
+            y: snake.figure[j].next.y,
         }
-        snake.length.unshift(newPart);
+        
+        snakePartPositions.push(snakePart);
+
+        j+=1
+    }
+
+    for (let i = 0; i < snakePartPositions.length; i++) {
+        ctx.beginPath();
+        ctx.rect(snakePartPositions[i].x, snakePartPositions[i].y, square, square);
+        ctx.fillStyle = snake.color;
+        ctx.fill();
+    }
+     
+    if (snake.figure[0].x === foodPosition.x && snake.figure[0].y === foodPosition.y) {
+        score+=1
+        snakeIndex+=1
+        eatenApple = true;
+        eat.play();
+
         foodPosition =  {
             x: Math.round(Math.random()*16+1)*square,
             y: Math.round(Math.random()*14+3)*square,
         }
     }
+    
+    if (eatenApple) {
+        for (let i = 1; i <= snakeIndex; i++) {
+            if (directions === "Up") {
+                snake.figure[i-1].next = {
+                    x: snake.figure[i-1].x,
+                    y: snake.figure[i-1].y - square,
+                    next: null,
+                }
+            }else if (directions === "Down") {
+                snake.figure[i-1].next = {
+                    x: snake.figure[i-1].x,
+                    y: snake.figure[i-1].y + square,
+                    next: null,
+                }
+            } else if (directions === "Right") {
+                 snake.figure[i-1].next = {
+                    x: snake.figure[i-1].x + square,
+                    y: snake.figure[i-1].y,
+                    next: null,
+                }
+            } else if (directions === "Left") {
+                snake.figure[i-1].next = {
+                    x: snake.figure[i-1].x - square,
+                    y: snake.figure[i-1].y,
+                    next: null,
+                }
+            } 
+        }
+}
 
     if (directions === "Up") {
         oldHeadY = oldHeadY - square
@@ -153,7 +206,7 @@ function game() {
     } 
 
     
-    if (snake.length[0].x > 17*square || snake.length[0].x < square || snake.length[0].y > 17*square || snake.length[0].y < 3*square) {
+    if (snake.figure[0].x > 17*square || snake.figure[0].x < square || snake.figure[0].y > 17*square || snake.figure[0].y < 3*square) {
         console.log("gameOver");
         dead.play();
     }
