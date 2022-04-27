@@ -12,10 +12,10 @@ class Snake {
 }
 
 
-function getColor() {
+function getColor() { //randomize a color every round.
     let color = "";
     let makeColor = ["red", "blue", "yellow", "pink", "purple", "white", "black", "aqua", "orange"];
-    color = makeColor[Math.random() * makeColor.length-1];
+    color = makeColor[Math.round(Math.random()*makeColor.length-1)];
     return (color);
 }
 
@@ -60,9 +60,8 @@ snake.figure[0] = {
     y: 10*square,
     next: null,
 }
-let snakeIndex = 0; //the index of every part in the snake array.
 
-let j = 0; //count the number of snake parts, begins with one part.
+let snakeIndex = 0; //the index of every part of the snake except the head.
 
 let eatenApple = false; //in the beginning it controls if the snake ate the an apple to uppdate new snake parts.
 
@@ -99,9 +98,9 @@ function game() {
 
     ctx.clearRect(0, 0, innerWidth, innerHeight);
 
-    ctx.drawImage(ground, 0,0);
+    ctx.drawImage(ground, 0,0); //draws the game field image.
 
-    ctx.drawImage(foodImg, foodPosition.x, foodPosition.y);
+    ctx.drawImage(foodImg, foodPosition.x, foodPosition.y); //draws the apple image.
     
     //movment of the snake head.
     if (directions === "Up") {
@@ -115,26 +114,19 @@ function game() {
     } 
 
     //create the snake
-    for (let i = 0; i < snake.figure.length; i++) {
-        /*
-        ctx.beginPath();
-        ctx.drawImage(snakeHead, snake.figure[0].x, snake.figure[0].y)
-        ctx.rect(snake.figure[i].x, snake.figure[i].y, square, square)
-        ctx.fillStyle = snake.color;
-        ctx.fill();
-        */
-    }
-
     if (snake.figure[0].next === null) {
         ctx.beginPath();
         ctx.rect(snake.figure[0].x, snake.figure[0].y, square, square);
+        ctx.drawImage(snakeHead, snake.figure[0].x, snake.figure[0].y);
         ctx.fillStyle = snake.color;
         ctx.fill();
     }
  
     let snakePartPositions = [];
     
-    while (snake.figure[j].next !== null) {
+    let j = 0; //count the number of snake parts, begins with one part.
+
+    while (snake.figure[j].next !== null) { //läses som undefind
 
         snakePart = {
             x: snake.figure[j].next.x,
@@ -194,17 +186,6 @@ function game() {
             } 
         }
 }
-
-    if (directions === "Up") {
-        oldHeadY = oldHeadY - square
-    }else if (directions === "Down") {
-        oldHeadY = oldHeadY + square
-    } else if (directions === "Right") {
-        oldHeadX = oldHeadX + square
-    } else if (directions === "Left") {
-        oldHeadX = oldHeadX - square
-    } 
-
     
     if (snake.figure[0].x > 17*square || snake.figure[0].x < square || snake.figure[0].y > 17*square || snake.figure[0].y < 3*square) {
         console.log("gameOver");
