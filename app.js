@@ -5,23 +5,33 @@ const ctx = canvas.getContext("2d");
 //identify snake
 
 class Snake {
-    constructor(color, figure) {
-         this.color = color;
-         this.figure = figure;
-    }
+  constructor(color, figure) {
+    this.color = color;
+    this.figure = figure;
+  }
 }
 
-
-function getColor() { //randomize a color every round.
-    let color = "";
-    let makeColor = ["red", "blue", "yellow", "pink", "purple", "white", "black", "aqua", "orange"];
-    color = makeColor[Math.round(Math.random()*makeColor.length-1)];
-    return (color);
+function getColor() {
+  //randomize a color every round.
+  let color = "";
+  let makeColor = [
+    "red",
+    "blue",
+    "yellow",
+    "pink",
+    "purple",
+    "white",
+    "black",
+    "aqua",
+    "orange",
+  ];
+  color = makeColor[Math.round(Math.random() * makeColor.length - 1)];
+  return color;
 }
 
 const snake = new Snake(getColor(), []);
 
-//create the units
+//create the unit
 const square = 32;
 
 //load image
@@ -53,23 +63,23 @@ dead.src = "sounds/audio_dead.mp3";
 const eat = new Audio();
 eat.src = "sounds/audio_eat.mp3";
 
-//position of the head of the snake
+//position of the head of the snake in the beginning of every round.
 
-snake.figure[0] = {
-    x: 5*square,
-    y: 10*square,
-    next: null,
-}
+snakeFigure = {
+  x: 5 * square,
+  y: 10 * square,
+  next: null,
+};
 
 let snakeIndex = 0; //the index of every part of the snake except the head.
 
 let eatenApple = false; //in the beginning it controls if the snake ate the an apple to uppdate new snake parts.
 
 // create the food position in the beginning.
-let foodPosition =  {
-    x: 14*square,
-    y: 10*square,
-}
+let foodPosition = {
+  x: 14 * square,
+  y: 10 * square,
+};
 
 //create the score var
 let score = 0;
@@ -77,127 +87,183 @@ let score = 0;
 //control the snake
 let directions;
 
-document.addEventListener("keydown", function(event) {
-    let key = event.key;
-    if(key == "ArrowLeft" && directions !== "Right"){
-        directions = "Left";
-        left.play();
-    }else if(key == "ArrowUp" && directions !== "Down"){
-        directions = "Up";
-        up.play();
-    }else if(key == "ArrowRight" && directions !== "Left"){
-        directions = "Right";
-        right.play();
-    }else if(key == "ArrowDown" && directions !== "Up"){
-        directions = "Down";
-        down.play();
-   }
-})
+document.addEventListener("keydown", function (event) {
+  let key = event.key;
+  if (key == "ArrowLeft" && directions !== "Right") {
+    directions = "Left";
+    left.play();
+  } else if (key == "ArrowUp" && directions !== "Down") {
+    directions = "Up";
+    up.play();
+  } else if (key == "ArrowRight" && directions !== "Left") {
+    directions = "Right";
+    right.play();
+  } else if (key == "ArrowDown" && directions !== "Up") {
+    directions = "Down";
+    down.play();
+  }
+});
+//order to reach all next parts of the snake object
+function snakeNextPart(snake, numberOftimes) {
+  snake = "snakeFigure[0].next";
+  for (let i = 0; i < numberOftimes; i++) {
+    snake += ".next";
+  }
+  snake = snake.replace("undefined", ""); //tar bort undefined word from text.
+  return snake; //return a variable with a value "".
+}
 //draw everything to the canvas
 function game() {
+  ctx.clearRect(0, 0, innerWidth, innerHeight);
 
-    ctx.clearRect(0, 0, innerWidth, innerHeight);
+  ctx.drawImage(ground, 0, 0); //draws the game field image.
 
-    ctx.drawImage(ground, 0,0); //draws the game field image.
+  ctx.drawImage(foodImg, foodPosition.x, foodPosition.y); //draws the apple image.
 
-    ctx.drawImage(foodImg, foodPosition.x, foodPosition.y); //draws the apple image.
-    
-    //movment of the snake head.
-    if (directions === "Up") {
-        snake.figure[0].y = snake.figure[0].y - square;
-    }else if (directions === "Down") {
-        snake.figure[0].y = snake.figure[0].y + square;
-    } else if (directions === "Right") {
-        snake.figure[0].x = snake.figure[0].x + square;
-    } else if (directions === "Left") {
-        snake.figure[0].x = snake.figure[0].x - square;
-    } 
+  //movment of the snake head.
+  if (directions === "Up") {
+    snakeFigure.y = snakeFigure.y - square;
+  } else if (directions === "Down") {
+    snakeFigure.y = snakeFigure.y + square;
+  } else if (directions === "Right") {
+    snakeFigure.x = snakeFigure.x + square;
+  } else if (directions === "Left") {
+    snakeFigure.x = snakeFigure.x - square;
+  }
 
-    //create the snake
-    if (snake.figure[0].next === null) {
-        ctx.beginPath();
-        ctx.rect(snake.figure[0].x, snake.figure[0].y, square, square);
-        ctx.drawImage(snakeHead, snake.figure[0].x, snake.figure[0].y);
-        ctx.fillStyle = snake.color;
-        ctx.fill();
-    }
- 
-    let snakePartPositions = [];
-    
-    let j = 0; //count the number of snake parts, begins with one part.
+  //create the snake head.
+  ctx.beginPath();
+  ctx.rect(snakeFigure.x, snakeFigure.y, square, square);
+  ctx.drawImage(snakeHead, snakeFigure.x, snakeFigure.y);
+  ctx.fillStyle = snake.color;
+  ctx.fill();
 
-    while (snake.figure[j].next !== null) { //läses som undefind
+  //create the snake body.
 
-        snakePart = {
-            x: snake.figure[j].next.x,
-            y: snake.figure[j].next.y,
+  let snakePartPositions = [];
+
+  let j = 0; //count the number of snake parts, how many objects that have a .next that are defined.
+
+  let snakePart = snakeNextPart(snakeFigure.next, j);
+  window[snakePart];
+
+  while (snakePart !== null) {
+    snakeBody = {
+      x: snakePart.x,
+      y: snakePart.y,
+    };
+
+    snakePartPositions.unshift(snakePart);
+
+    j += 1;
+    snakePart = snakeNextPart(snakeFigure.next, j);
+  }
+
+  for (let i = 0; i < snakePartPositions.length; i++) {
+    ctx.beginPath();
+    ctx.rect(snakePartPositions[i].x, snakePartPositions[i].y, square, square);
+    ctx.fillStyle = snake.color;
+    ctx.fill();
+  }
+
+  if (snakeFigure.x === foodPosition.x && snakeFigure.y === foodPosition.y) {
+    score += 1;
+    snakeIndex += 1;
+    eatenApple = true;
+    eat.play();
+
+    foodPosition = {
+      x: Math.round(Math.random() * 16 + 1) * square,
+      y: Math.round(Math.random() * 14 + 3) * square,
+    };
+  }
+
+  if (eatenApple) {
+    for (let i = 1; i <= snakeIndex; i++) {
+      if (directions === "Up") {
+        if (i >= 2) {
+          let snakePart = snakeNextPart(snakeFigure.next, i - 1);
+          window[snakePart] = ""; //convert the string to a variable with the value "" in the beginning.
+          snakePart = {
+            x: snakeFigure.x,
+            y: snakeFigure.y,
+            next: null,
+          };
+        } else {
+          snakeFigure.next = {
+            x: snakeFigure.x,
+            y: snakeFigure.y,
+            next: null,
+          };
         }
-        
-        snakePartPositions.push(snakePart);
-
-        j+=1
-    }
-
-    for (let i = 0; i < snakePartPositions.length; i++) {
-        ctx.beginPath();
-        ctx.rect(snakePartPositions[i].x, snakePartPositions[i].y, square, square);
-        ctx.fillStyle = snake.color;
-        ctx.fill();
-    }
-     
-    if (snake.figure[0].x === foodPosition.x && snake.figure[0].y === foodPosition.y) {
-        score+=1
-        snakeIndex+=1
-        eatenApple = true;
-        eat.play();
-
-        foodPosition =  {
-            x: Math.round(Math.random()*16+1)*square,
-            y: Math.round(Math.random()*14+3)*square,
+      } else if (directions === "Down") {
+        if (i >= 2) {
+          let snakePart = snakeNextPart(snakeFigure.next, i - 1);
+          window[snakePart] = ""; //convert the string to a variable with the value "" in the beginning.
+          snakePart = {
+            x: snakeFigure.x,
+            y: snakeFigure.y,
+            next: null,
+          };
+        } else {
+          snakeFigure.next = {
+            x: snakeFigure.x,
+            y: snakeFigure.y,
+            next: null,
+          };
         }
-    }
-    
-    if (eatenApple) {
-        for (let i = 1; i <= snakeIndex; i++) {
-            if (directions === "Up") {
-                snake.figure[i-1].next = {
-                    x: snake.figure[i-1].x,
-                    y: snake.figure[i-1].y - square,
-                    next: null,
-                }
-            }else if (directions === "Down") {
-                snake.figure[i-1].next = {
-                    x: snake.figure[i-1].x,
-                    y: snake.figure[i-1].y + square,
-                    next: null,
-                }
-            } else if (directions === "Right") {
-                 snake.figure[i-1].next = {
-                    x: snake.figure[i-1].x + square,
-                    y: snake.figure[i-1].y,
-                    next: null,
-                }
-            } else if (directions === "Left") {
-                snake.figure[i-1].next = {
-                    x: snake.figure[i-1].x - square,
-                    y: snake.figure[i-1].y,
-                    next: null,
-                }
-            } 
+      } else if (directions === "Right") {
+        if (i >= 2) {
+          let snakePart = snakeNextPart(snakeFigure.next, i - 1);
+          window[snakePart] = ""; //convert the string to a variable with the value "" in the beginning.
+          snakePart = {
+            x: snakeFigure.x,
+            y: snakeFigure.y,
+            next: null,
+          };
+        } else {
+          snakeFigure.next = {
+            x: snakeFigure.x,
+            y: snakeFigure.y,
+            next: null,
+          };
         }
-}
-    
-    if (snake.figure[0].x > 17*square || snake.figure[0].x < square || snake.figure[0].y > 17*square || snake.figure[0].y < 3*square) {
-        console.log("gameOver");
-        dead.play();
+      } else if (directions === "Left") {
+        if (i >= 2) {
+          let snakePart = snakeNextPart(snakeFigure.next, i - 1);
+          window[snakePart] = ""; //convert the string to a variable with the value "" in the beginning.
+          snakePart = {
+            x: snakeFigure.x,
+            y: snakeFigure.y,
+            next: null,
+          };
+        } else {
+          snakeFigure.next = {
+            x: snakeFigure.x,
+            y: snakeFigure.y,
+            next: null,
+          };
+        }
+      }
     }
-    //canvas.width canvas.hight
-    //maybe change background shop
+  }
 
-    ctx.font = "40px Verdana";
-    ctx.fillStyle = "white"
-    ctx.fillText(score, 3*square, 1.6*square)
+  if (
+    snakeFigure.x > 17 * square ||
+    snakeFigure.x < square ||
+    snakeFigure.y > 17 * square ||
+    snakeFigure.y < 3 * square
+  ) {
+    console.log("gameOver");
+    dead.play();
+  }
+  //canvas.width canvas.hight
+  //maybe change background shop
+
+  ctx.font = "40px Verdana";
+  ctx.fillStyle = "white";
+  ctx.fillText(score, 3 * square, 1.6 * square);
 }
 
 //call draw function every 100ms
-setInterval(game, 150);
+setInterval(game, 100);
