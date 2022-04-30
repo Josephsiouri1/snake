@@ -71,6 +71,8 @@ snakeFigure = {
   next: null,
 };
 
+let snakePartPositions = [];
+
 let snakeIndex = 0; //the index of every part of the snake except the head.
 
 let eatenApple = false; //in the beginning it controls if the snake ate the an apple to uppdate new snake parts.
@@ -104,13 +106,13 @@ document.addEventListener("keydown", function (event) {
   }
 });
 //order to reach all next parts of the snake object
-function snakeNextPart(snake, numberOftimes) {
-  snake = "snakeFigure[0].next";
+function snakeNextPart(snakeAttribute, numberOftimes) {
+  snakeAttribute = "snakeFigure.next";
   for (let i = 0; i < numberOftimes; i++) {
-    snake += ".next";
+    snakeAttribute += ".next";
   }
-  snake = snake.replace("undefined", ""); //tar bort undefined word from text.
-  return snake; //return a variable with a value "".
+  snakeAttribute = snakeAttribute.replace("undefined", ""); //tar bort undefined word from text.
+  return snakeAttribute; //return a variable with a value "".
 }
 //draw everything to the canvas
 function game() {
@@ -140,24 +142,7 @@ function game() {
 
   //create the snake body.
 
-  let snakePartPositions = [];
-
   let j = 0; //count the number of snake parts, how many objects that have a .next that are defined.
-
-  let snakePart = snakeNextPart(snakeFigure.next, j);
-  window[snakePart];
-
-  while (snakePart !== null) {
-    snakeBody = {
-      x: snakePart.x,
-      y: snakePart.y,
-    };
-
-    snakePartPositions.unshift(snakePart);
-
-    j += 1;
-    snakePart = snakeNextPart(snakeFigure.next, j);
-  }
 
   for (let i = 0; i < snakePartPositions.length; i++) {
     ctx.beginPath();
@@ -177,73 +162,43 @@ function game() {
       y: Math.round(Math.random() * 14 + 3) * square,
     };
   }
+  snakePartPositions = [];
 
   if (eatenApple) {
     for (let i = 1; i <= snakeIndex; i++) {
+      let snakePart = snakeNextPart(snakeFigure.next, i - 1);
       if (directions === "Up") {
-        if (i >= 2) {
-          let snakePart = snakeNextPart(snakeFigure.next, i - 1);
-          window[snakePart] = ""; //convert the string to a variable with the value "" in the beginning.
-          snakePart = {
-            x: snakeFigure.x,
-            y: snakeFigure.y,
-            next: null,
-          };
-        } else {
-          snakeFigure.next = {
-            x: snakeFigure.x,
-            y: snakeFigure.y,
-            next: null,
-          };
-        }
+        window[snakePart] = ""; //convert the string to a variable with the value "" in the beginning.
+        snakePart = {
+          x: snakeFigure.x,
+          y: snakeFigure.y, //resten ritas inte med samma position, kan det vara bara första.
+          next: null,
+        };
+        snakePartPositions.unshift(snakePart);
       } else if (directions === "Down") {
-        if (i >= 2) {
-          let snakePart = snakeNextPart(snakeFigure.next, i - 1);
-          window[snakePart] = ""; //convert the string to a variable with the value "" in the beginning.
-          snakePart = {
-            x: snakeFigure.x,
-            y: snakeFigure.y,
-            next: null,
-          };
-        } else {
-          snakeFigure.next = {
-            x: snakeFigure.x,
-            y: snakeFigure.y,
-            next: null,
-          };
-        }
+        window[snakePart] = ""; //convert the string to a variable with the value "" in the beginning.
+        snakePart = {
+          x: snakeFigure.x,
+          y: snakeFigure.y,
+          next: null,
+        };
+        snakePartPositions.unshift(snakePart);
       } else if (directions === "Right") {
-        if (i >= 2) {
-          let snakePart = snakeNextPart(snakeFigure.next, i - 1);
-          window[snakePart] = ""; //convert the string to a variable with the value "" in the beginning.
-          snakePart = {
-            x: snakeFigure.x,
-            y: snakeFigure.y,
-            next: null,
-          };
-        } else {
-          snakeFigure.next = {
-            x: snakeFigure.x,
-            y: snakeFigure.y,
-            next: null,
-          };
-        }
+        window[snakePart] = ""; //convert the string to a variable with the value "" in the beginning.
+        snakePart = {
+          x: snakeFigure.x,
+          y: snakeFigure.y,
+          next: null,
+        };
+        snakePartPositions.unshift(snakePart);
       } else if (directions === "Left") {
-        if (i >= 2) {
-          let snakePart = snakeNextPart(snakeFigure.next, i - 1);
-          window[snakePart] = ""; //convert the string to a variable with the value "" in the beginning.
-          snakePart = {
-            x: snakeFigure.x,
-            y: snakeFigure.y,
-            next: null,
-          };
-        } else {
-          snakeFigure.next = {
-            x: snakeFigure.x,
-            y: snakeFigure.y,
-            next: null,
-          };
-        }
+        window[snakePart] = ""; //convert the string to a variable with the value "" in the beginning.
+        snakePart = {
+          x: snakeFigure.x,
+          y: snakeFigure.y,
+          next: null,
+        };
+        snakePartPositions.unshift(snakePart);
       }
     }
   }
