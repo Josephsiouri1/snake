@@ -114,6 +114,7 @@ function snakeNextPart(snakeAttribute, numberOftimes) {
   snakeAttribute = snakeAttribute.replace("undefined", ""); //tar bort undefined word from text.
   return snakeAttribute; //return a variable with a value "".
 }
+
 //draw everything to the canvas
 function game() {
   ctx.clearRect(0, 0, innerWidth, innerHeight);
@@ -174,6 +175,7 @@ function game() {
           y: snakeFigure.y, //resten ritas inte med samma position, kan det vara bara första.
           next: null,
         };
+
         snakePartPositions.unshift(snakePart);
       } else if (directions === "Down") {
         window[snakePart] = ""; //convert the string to a variable with the value "" in the beginning.
@@ -220,5 +222,90 @@ function game() {
   ctx.fillText(score, 3 * square, 1.6 * square);
 }
 
-//call draw function every 100ms
-setInterval(game, 100);
+//call draw function every 100ms, starts the game.
+
+let start = document.getElementById("start-button");
+
+let options = document.getElementById("options");
+
+let slow = document.getElementById("slow");
+let normal = document.getElementById("normal");
+let fast = document.getElementById("fast");
+
+let back = document.getElementById("back");
+
+options.addEventListener("click", function () {
+  start.style.width = "0vw";
+  start.innerHTML = "";
+  options.style.width = "0vw";
+  options.innerHTML = "";
+  slow.style.width = "15vw";
+  normal.style.width = "15vw";
+  fast.style.width = "15vw";
+  back.style.width = "15vw";
+  slow.innerHTML = "SLOW";
+  normal.innerHTML = "NORMAL";
+  fast.innerHTML = "FAST";
+  back.innerHTML = "BACK";
+});
+
+back.addEventListener("click", function () {
+  slow.style.width = "0vw";
+  normal.style.width = "0vw";
+  fast.style.width = "0vw";
+  back.style.width = "0vw";
+  slow.innerHTML = "";
+  normal.innerHTML = "";
+  fast.innerHTML = "";
+  back.innerHTML = "";
+  start.style.width = "15vw";
+  start.innerHTML = "START";
+  options.style.width = "15vw";
+  options.innerHTML = "OPTIONS";
+});
+
+let levels = document.getElementsByClassName("levels");
+
+for (let i = 0; i < levels.length; i++) {
+  levels[i].addEventListener("click", function () {
+    for (let i = 0; i < levels.length; i++) {
+      if (levels[i].classList.contains("chosen-level")) {
+        levels[i].classList.remove("chosen-level");
+      }
+    }
+    levels[i].classList.add("chosen-level");
+  });
+}
+console.log(levels[1].attributes.length);
+start.addEventListener("click", function () {
+  start.style.width = "0vw";
+  start.innerHTML = "";
+  options.style.width = "0vw";
+  options.innerHTML = "";
+  let idArray = [];
+  let chosenLevelArray = [];
+  for (let i = 0; i < levels.length; i++) {
+    if (levels[i].classList.contains("chosen-level")) {
+      for (let j = 0; i < levels[i].attributes.length; j++) {
+        if (Array.from(levels[i].attributes)[j].value === "slow") {
+          idArray.push("slow");
+        } else if (Array.from(levels[i].attributes)[j].value === "normal") {
+          idArray.push("normal");
+        }
+      }
+    } else {
+      chosenLevelArray.push(true);
+    }
+  }
+  if (idArray.includes("slow")) {
+    setInterval(game, 200);
+  } else if (idArray.includes("normal")) {
+    setInterval(game, 150);
+  } else {
+    setInterval(game, 100);
+  }
+  if (chosenLevelArray.filter((x) => x === true).length == levels.length) {
+    //if all three levels dosen't contain the "chosen-level" class it automatically make the level normal.
+    setInterval(game, 150);
+  }
+});

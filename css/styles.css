@@ -12,3 +12,39 @@ h1 {
     font-family: 'Bebas Neue';
     font-size: 3rem;
 }
+.game-settings {
+    display: flex;
+    background-color: green;
+    width: 15vw;
+    height: 10vh;
+    justify-content: center;
+    align-items: center;
+    color: white;
+    border-radius: 50px;
+    cursor: pointer;
+    position: absolute;
+    left: 590px;
+    top: 200px;
+    font-size: x-large;
+}
+#options {
+    top: 300px;
+}
+#slow {
+    width: 0vw;
+}
+#normal {
+    top: 300px;
+    width: 0vw;
+}
+#fast {
+    top: 400px;
+    width: 0vw;
+}
+#back {
+    top: 500px;
+    width: 0vw;
+}
+.chosen-level {
+    background-color: red;
+}
