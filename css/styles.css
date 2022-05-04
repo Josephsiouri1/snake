@@ -51,3 +51,10 @@ h1 {
 #play-again {
     width: 0vw;
 }
+#gameOver {
+    position: absolute;
+    left: 570px;
+    top: 130px;
+    font-size: 50px;
+    color: white;
+}

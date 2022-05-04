@@ -184,6 +184,7 @@ function game() {
     options.style.width = "15vw";
     playAgain.innerHTML = "PLAY AGAIN";
     options.innerHTML = "OPTIONS";
+    gameOver.innerHTML = "Game Over";
   }
 
   ctx.font = "40px Verdana";
@@ -196,6 +197,8 @@ function game() {
 let start = document.getElementById("start-button");
 
 let playAgain = document.getElementById("play-again");
+
+let gameOver = document.getElementById("gameOver");
 
 let play = document.getElementsByClassName("play");
 
@@ -256,6 +259,7 @@ playAgain.addEventListener("click", function () {
   };
   snakePartPositions = [];
   directions = null;
+  gameOver.innerHTML = "";
 });
 for (let i = 0; i < play.length; i++) {
   play[i].addEventListener("click", function () {
