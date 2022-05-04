@@ -191,7 +191,7 @@ function game() {
   ctx.fillStyle = "white";
   ctx.fillText(score, 3 * square, 1.6 * square);
 }
-
+//make that you can win.
 //call draw function every 100ms, starts the game.
 
 let start = document.getElementById("start-button");
@@ -255,6 +255,10 @@ for (let i = 0; i < levels.length; i++) {
 playAgain.addEventListener("click", function () {
   snakeFigure = {
     x: 5 * square,
+    y: 10 * square,
+  };
+  foodPosition = {
+    x: 14 * square,
     y: 10 * square,
   };
   snakePartPositions = [];
