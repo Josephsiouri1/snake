@@ -191,8 +191,6 @@ let start = document.getElementById("start-button");
 
 let gameOver = document.getElementById("gameOver");
 
-let play = document.getElementsByClassName("play");
-
 let options = document.getElementById("options");
 
 let slow = document.getElementById("slow");
