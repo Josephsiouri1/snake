@@ -54,7 +54,7 @@ h1 {
 #gameOver {
     position: absolute;
     left: 570px;
-    top: 130px;
+    top: 300px;
     font-size: 50px;
     color: white;
 }

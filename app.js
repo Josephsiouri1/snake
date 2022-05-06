@@ -5,8 +5,10 @@ const ctx = canvas.getContext("2d");
 //identify snake
 
 class Snake {
-  constructor(color) {
+  constructor(color, head, body) {
     this.color = color;
+    this.head = head;
+    this.body = body;
   }
 }
 
@@ -28,11 +30,18 @@ function getColor() {
   return color;
 }
 
-const snake = new Snake(getColor());
-
 //create the unit
 const square = 32;
 
+let snake = new Snake( //defines the snake object
+  getColor(),
+  {
+    //position of the head of the snake in the beginning of every round.
+    x: 5 * square,
+    y: 10 * square,
+  },
+  []
+);
 //load image
 
 const ground = new Image();
@@ -40,9 +49,6 @@ ground.src = "images/ground.png";
 
 const foodImg = new Image();
 foodImg.src = "images/food.png";
-
-const snakeHead = new Image();
-snakeHead.src = "images/snakeHead.jpg"; //ritas inte
 
 const left = new Audio();
 left.src = "sounds/audio_left.mp3";
@@ -62,20 +68,7 @@ dead.src = "sounds/audio_dead.mp3";
 const eat = new Audio();
 eat.src = "sounds/audio_eat.mp3";
 
-//position of the head of the snake in the beginning of every round.
-
-snakeFigure = {
-  x: 5 * square,
-  y: 10 * square,
-};
-
-let snakePartPositions = []; //the coordinates of every part in the snake.
-
 let snakePartNumber = 0; //the index of every part of the snake except the head.
-
-let eatenApple = false; //in the beginning it controls if the snake ate the an apple to uppdate new snake parts.
-
-let NumberOfsnakeParts = []; //to only add a part while the snake ate an apple.
 
 // create the food position in the beginning.
 let foodPosition = {
@@ -116,23 +109,23 @@ function game() {
 
   let snakePart = {
     //the added part gets the previous positions of the head.
-    x: snakeFigure.x,
-    y: snakeFigure.y,
+    x: snake.head.x,
+    y: snake.head.y,
   };
-  snakePartPositions.push(snakePart); //put an item at the end of the list next to the heads.
+  snake.body.push(snakePart); //put an item at the end of the list next to the heads.
 
   //movment of the snake head.
   if (directions === "Up") {
-    snakeFigure.y = snakeFigure.y - square;
+    snake.head.y = snake.head.y - square;
   } else if (directions === "Down") {
-    snakeFigure.y = snakeFigure.y + square;
+    snake.head.y = snake.head.y + square;
   } else if (directions === "Right") {
-    snakeFigure.x = snakeFigure.x + square;
+    snake.head.x = snake.head.x + square;
   } else if (directions === "Left") {
-    snakeFigure.x = snakeFigure.x - square;
+    snake.head.x = snake.head.x - square;
   }
 
-  if (snakeFigure.x === foodPosition.x && snakeFigure.y === foodPosition.y) {
+  if (snake.head.x === foodPosition.x && snake.head.y === foodPosition.y) {
     score += 1;
     snakePartNumber += 1;
     eat.play();
@@ -145,21 +138,19 @@ function game() {
 
   //create the snake body.
 
-  if (snakePartPositions.length > snakePartNumber) {
-    snakePartPositions.shift(); // remove the furthet item from the snake parts if have more than our tail size.
+  if (snake.body.length > snakePartNumber) {
+    snake.body.shift(); // remove the furthet item from the snake parts if have more than our tail size.
   }
-  for (let i = 0; i < snakePartPositions.length; i++) {
-    let part = snakePartPositions[i];
+  for (let i = 0; i < snake.body.length; i++) {
     ctx.beginPath();
-    ctx.rect(part.x, part.y, square, square);
+    ctx.rect(snake.body[i].x, snake.body[i].y, square, square);
     ctx.fillStyle = snake.color;
     ctx.fill();
   }
 
   //create the snake head.
   ctx.beginPath();
-  ctx.rect(snakeFigure.x, snakeFigure.y, square, square);
-  ctx.drawImage(snakeHead, snakeFigure.x, snakeFigure.y);
+  ctx.rect(snake.head.x, snake.head.y, square, square);
   ctx.fillStyle = "#006064";
   ctx.fill();
 
@@ -172,19 +163,21 @@ function game() {
   }
 
   if (
-    snakeFigure.x > 17 * square ||
-    snakeFigure.x < square ||
-    snakeFigure.y > 17 * square ||
-    snakeFigure.y < 3 * square ||
-    snakeHitItSelf(snakePartPositions, snakeFigure)
+    snake.head.x > 17 * square ||
+    snake.head.x < square ||
+    snake.head.y > 17 * square ||
+    snake.head.y < 3 * square ||
+    snakeHitItSelf(snake.body, snake.head)
   ) {
     dead.play();
     clearInterval(gameFunction);
-    playAgain.style.width = "15vw";
-    options.style.width = "15vw";
-    playAgain.innerHTML = "PLAY AGAIN";
-    options.innerHTML = "OPTIONS";
     gameOver.innerHTML = "Game Over";
+  }
+
+  if (score === 62) {
+    //when the score is 62 the player wins.
+    clearInterval(gameFunction);
+    gameOver.innerHTML = "YOU WON";
   }
 
   ctx.font = "40px Verdana";
@@ -195,8 +188,6 @@ function game() {
 //call draw function every 100ms, starts the game.
 
 let start = document.getElementById("start-button");
-
-let playAgain = document.getElementById("play-again");
 
 let gameOver = document.getElementById("gameOver");
 
@@ -252,50 +243,36 @@ for (let i = 0; i < levels.length; i++) {
     levels[i].classList.add("chosen-level");
   });
 }
-playAgain.addEventListener("click", function () {
-  snakeFigure = {
-    x: 5 * square,
-    y: 10 * square,
-  };
-  foodPosition = {
-    x: 14 * square,
-    y: 10 * square,
-  };
-  snakePartPositions = [];
-  directions = null;
-  gameOver.innerHTML = "";
-});
-for (let i = 0; i < play.length; i++) {
-  play[i].addEventListener("click", function () {
-    play[i].style.width = "0vw";
-    play[i].innerHTML = "";
-    options.style.width = "0vw";
-    options.innerHTML = "";
-    let idArray = [];
-    let chosenLevelArray = [];
-    for (let i = 0; i < levels.length; i++) {
-      if (levels[i].classList.contains("chosen-level")) {
-        for (let j = 0; j < levels[i].attributes.length; j++) {
-          if (levels[i].attributes[j].value === "slow") {
-            idArray.push("slow");
-          } else if (levels[i].attributes[j].value === "normal") {
-            idArray.push("normal");
-          } else {
-            chosenLevelArray.push(true);
-          }
+
+start.addEventListener("click", function () {
+  start.style.width = "0vw";
+  start.innerHTML = "";
+  options.style.width = "0vw";
+  options.innerHTML = "";
+  let idArray = [];
+  let chosenLevelArray = [];
+  for (let i = 0; i < levels.length; i++) {
+    if (levels[i].classList.contains("chosen-level")) {
+      for (let j = 0; j < levels[i].attributes.length; j++) {
+        if (levels[i].attributes[j].value === "slow") {
+          idArray.push("slow");
+        } else if (levels[i].attributes[j].value === "normal") {
+          idArray.push("normal");
+        } else {
+          chosenLevelArray.push(true);
         }
       }
     }
-    if (idArray.includes("slow")) {
-      gameFunction = setInterval(game, 200);
-    } else if (idArray.includes("normal")) {
-      gameFunction = setInterval(game, 150);
-    } else {
-      gameFunction = setInterval(game, 100);
-    }
-    if (chosenLevelArray.filter((x) => x === true).length == levels.length) {
-      //if all three levels dosen't contain the "chosen-level" class it automatically make the level normal.
-      gameFunction = setInterval(game, 150);
-    }
-  });
-}
+  }
+  if (idArray.includes("slow")) {
+    gameFunction = setInterval(game, 200);
+  } else if (idArray.includes("normal")) {
+    gameFunction = setInterval(game, 150);
+  } else {
+    gameFunction = setInterval(game, 100);
+  }
+  if (chosenLevelArray.filter((x) => x === true).length == levels.length) {
+    //if all three levels dosen't contain the "chosen-level" class it automatically make the level normal.
+    gameFunction = setInterval(game, 150);
+  }
+});
