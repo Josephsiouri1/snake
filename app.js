@@ -65,6 +65,9 @@ down.src = "sounds/audio_down.mp3";
 const dead = new Audio();
 dead.src = "sounds/audio_dead.mp3";
 
+const win = new Audio();
+win.src = "sounds/game-won.mp3";
+
 const eat = new Audio();
 eat.src = "sounds/audio_eat.mp3";
 
@@ -176,6 +179,7 @@ function game() {
 
   if (score === 62) {
     //when the score is 62 the player wins.
+    win.play();
     clearInterval(gameFunction);
     gameOver.innerHTML = "YOU WON";
   }
