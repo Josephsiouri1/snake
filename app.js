@@ -137,6 +137,17 @@ function game() {
       x: Math.round(Math.random() * 16 + 1) * square,
       y: Math.round(Math.random() * 14 + 3) * square,
     };
+    for (let i = 0; i < snake.body.length; i++) {
+      if (
+        snake.body[i].x === foodPosition.x &&
+        snake.body[i].y === foodPosition.y
+      ) {
+        foodPosition = {
+          x: Math.round(Math.random() * 16 + 1) * square,
+          y: Math.round(Math.random() * 14 + 3) * square,
+        };
+      }
+    }
   }
 
   //create the snake body.
