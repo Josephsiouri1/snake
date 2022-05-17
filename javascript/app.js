@@ -104,6 +104,8 @@ document.addEventListener("keydown", function (event) {
 
 //draw everything to the canvas
 function game() {
+  let gameOver = document.getElementById("gameOver");
+
   ctx.clearRect(0, 0, innerWidth, innerHeight);
 
   ctx.drawImage(ground, 0, 0); //draws the game field image.
@@ -200,90 +202,91 @@ function game() {
   ctx.fillText(score, 3 * square, 1.6 * square);
 }
 
-let start = document.getElementById("start-button");
+function gameSettings() {
+  let start = document.getElementById("start-button");
 
-let gameOver = document.getElementById("gameOver");
+  let options = document.getElementById("options");
 
-let options = document.getElementById("options");
+  let slow = document.getElementById("slow");
+  let normal = document.getElementById("normal");
+  let fast = document.getElementById("fast");
 
-let slow = document.getElementById("slow");
-let normal = document.getElementById("normal");
-let fast = document.getElementById("fast");
+  let back = document.getElementById("back");
 
-let back = document.getElementById("back");
-
-options.addEventListener("click", function () {
-  start.style.width = "0vw";
-  start.innerHTML = "";
-  options.style.width = "0vw";
-  options.innerHTML = "";
-  slow.style.width = "15vw";
-  normal.style.width = "15vw";
-  fast.style.width = "15vw";
-  back.style.width = "15vw";
-  slow.innerHTML = "SLOW";
-  normal.innerHTML = "NORMAL";
-  fast.innerHTML = "FAST";
-  back.innerHTML = "BACK";
-});
-
-back.addEventListener("click", function () {
-  slow.style.width = "0vw";
-  normal.style.width = "0vw";
-  fast.style.width = "0vw";
-  back.style.width = "0vw";
-  slow.innerHTML = "";
-  normal.innerHTML = "";
-  fast.innerHTML = "";
-  back.innerHTML = "";
-  start.style.width = "15vw";
-  start.innerHTML = "START";
-  options.style.width = "15vw";
-  options.innerHTML = "OPTIONS";
-});
-
-let levels = document.getElementsByClassName("levels");
-
-for (let i = 0; i < levels.length; i++) {
-  levels[i].addEventListener("click", function () {
-    for (let i = 0; i < levels.length; i++) {
-      if (levels[i].classList.contains("chosen-level")) {
-        levels[i].classList.remove("chosen-level");
-      }
-    }
-    levels[i].classList.add("chosen-level");
+  options.addEventListener("click", function () {
+    start.style.width = "0vw";
+    start.innerHTML = "";
+    options.style.width = "0vw";
+    options.innerHTML = "";
+    slow.style.width = "15vw";
+    normal.style.width = "15vw";
+    fast.style.width = "15vw";
+    back.style.width = "15vw";
+    slow.innerHTML = "SLOW";
+    normal.innerHTML = "NORMAL";
+    fast.innerHTML = "FAST";
+    back.innerHTML = "BACK";
   });
-}
 
-start.addEventListener("click", function () {
-  start.style.width = "0vw";
-  start.innerHTML = "";
-  options.style.width = "0vw";
-  options.innerHTML = "";
-  let idArray = [];
-  let chosenLevelArray = [];
+  back.addEventListener("click", function () {
+    slow.style.width = "0vw";
+    normal.style.width = "0vw";
+    fast.style.width = "0vw";
+    back.style.width = "0vw";
+    slow.innerHTML = "";
+    normal.innerHTML = "";
+    fast.innerHTML = "";
+    back.innerHTML = "";
+    start.style.width = "15vw";
+    start.innerHTML = "START";
+    options.style.width = "15vw";
+    options.innerHTML = "OPTIONS";
+  });
+
+  let levels = document.getElementsByClassName("levels");
+
   for (let i = 0; i < levels.length; i++) {
-    if (levels[i].classList.contains("chosen-level")) {
-      for (let j = 0; j < levels[i].attributes.length; j++) {
-        if (levels[i].attributes[j].value === "slow") {
-          idArray.push("slow");
-        } else if (levels[i].attributes[j].value === "normal") {
-          idArray.push("normal");
-        } else {
-          chosenLevelArray.push(true);
+    levels[i].addEventListener("click", function () {
+      for (let i = 0; i < levels.length; i++) {
+        if (levels[i].classList.contains("chosen-level")) {
+          levels[i].classList.remove("chosen-level");
         }
       }
+      levels[i].classList.add("chosen-level");
+    });
+  }
+
+  start.addEventListener("click", function () {
+    start.style.width = "0vw";
+    start.innerHTML = "";
+    options.style.width = "0vw";
+    options.innerHTML = "";
+    let idArray = [];
+    let chosenLevelArray = [];
+    for (let i = 0; i < levels.length; i++) {
+      if (levels[i].classList.contains("chosen-level")) {
+        for (let j = 0; j < levels[i].attributes.length; j++) {
+          if (levels[i].attributes[j].value === "slow") {
+            idArray.push("slow");
+          } else if (levels[i].attributes[j].value === "normal") {
+            idArray.push("normal");
+          } else {
+            chosenLevelArray.push(true);
+          }
+        }
+      }
+    } //call draw function every 100ms or 150ms or 200ms, to start the game in diffrent levels.
+    if (idArray.includes("slow")) {
+      gameFunction = setInterval(game, 200);
+    } else if (idArray.includes("normal")) {
+      gameFunction = setInterval(game, 150);
+    } else {
+      gameFunction = setInterval(game, 100);
     }
-  } //call draw function every 100ms or 150ms or 200ms, to start the game in diffrent levels.
-  if (idArray.includes("slow")) {
-    gameFunction = setInterval(game, 200);
-  } else if (idArray.includes("normal")) {
-    gameFunction = setInterval(game, 150);
-  } else {
-    gameFunction = setInterval(game, 100);
-  }
-  if (chosenLevelArray.filter((x) => x === true).length == levels.length) {
-    //if all three levels dosen't contain the "chosen-level" class it automatically make the level normal.
-    gameFunction = setInterval(game, 150);
-  }
-});
+    if (chosenLevelArray.filter((x) => x === true).length == levels.length) {
+      //if all three levels dosen't contain the "chosen-level" class it automatically make the level normal.
+      gameFunction = setInterval(game, 150);
+    }
+  });
+}
+gameSettings();
