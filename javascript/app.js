@@ -199,8 +199,6 @@ function game() {
   ctx.fillStyle = "white";
   ctx.fillText(score, 3 * square, 1.6 * square);
 }
-//make that you can win.
-//call draw function every 100ms, starts the game.
 
 let start = document.getElementById("start-button");
 
@@ -276,7 +274,7 @@ start.addEventListener("click", function () {
         }
       }
     }
-  }
+  } //call draw function every 100ms or 150ms or 200ms, to start the game in diffrent levels.
   if (idArray.includes("slow")) {
     gameFunction = setInterval(game, 200);
   } else if (idArray.includes("normal")) {
