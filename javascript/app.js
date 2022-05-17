@@ -31,14 +31,14 @@ function getColor() {
 }
 
 //create the unit
-const square = 32;
+const SQUARE = 32;
 
 let snake = new Snake( //defines the snake object
   getColor(),
   {
     //position of the head of the snake in the beginning of every round.
-    x: 5 * square,
-    y: 10 * square,
+    x: 5 * SQUARE,
+    y: 10 * SQUARE,
   },
   []
 );
@@ -75,8 +75,8 @@ let snakePartNumber = 0; //the index of every part of the snake except the head.
 
 // create the food position in the beginning.
 let foodPosition = {
-  x: 14 * square,
-  y: 10 * square,
+  x: 14 * SQUARE,
+  y: 10 * SQUARE,
 };
 
 //create the score var
@@ -121,13 +121,13 @@ function game() {
 
   //movment of the snake head.
   if (directions === "Up") {
-    snake.head.y = snake.head.y - square;
+    snake.head.y = snake.head.y - SQUARE;
   } else if (directions === "Down") {
-    snake.head.y = snake.head.y + square;
+    snake.head.y = snake.head.y + SQUARE;
   } else if (directions === "Right") {
-    snake.head.x = snake.head.x + square;
+    snake.head.x = snake.head.x + SQUARE;
   } else if (directions === "Left") {
-    snake.head.x = snake.head.x - square;
+    snake.head.x = snake.head.x - SQUARE;
   }
 
   if (snake.head.x === foodPosition.x && snake.head.y === foodPosition.y) {
@@ -136,8 +136,8 @@ function game() {
     eat.play();
 
     foodPosition = {
-      x: Math.round(Math.random() * 16 + 1) * square,
-      y: Math.round(Math.random() * 14 + 3) * square,
+      x: Math.round(Math.random() * 16 + 1) * SQUARE,
+      y: Math.round(Math.random() * 14 + 3) * SQUARE,
     };
     for (let i = 0; i < snake.body.length; i++) {
       if (
@@ -145,8 +145,8 @@ function game() {
         snake.body[i].y === foodPosition.y
       ) {
         foodPosition = {
-          x: Math.round(Math.random() * 16 + 1) * square,
-          y: Math.round(Math.random() * 14 + 3) * square,
+          x: Math.round(Math.random() * 16 + 1) * SQUARE,
+          y: Math.round(Math.random() * 14 + 3) * SQUARE,
         };
       }
     }
@@ -159,14 +159,14 @@ function game() {
   }
   for (let i = 0; i < snake.body.length; i++) {
     ctx.beginPath();
-    ctx.rect(snake.body[i].x, snake.body[i].y, square, square);
+    ctx.rect(snake.body[i].x, snake.body[i].y, SQUARE, SQUARE);
     ctx.fillStyle = snake.color;
     ctx.fill();
   }
 
   //create the snake head.
   ctx.beginPath();
-  ctx.rect(snake.head.x, snake.head.y, square, square);
+  ctx.rect(snake.head.x, snake.head.y, SQUARE, SQUARE);
   ctx.fillStyle = "#006064";
   ctx.fill();
 
@@ -179,10 +179,10 @@ function game() {
   }
 
   if (
-    snake.head.x > 17 * square ||
-    snake.head.x < square ||
-    snake.head.y > 17 * square ||
-    snake.head.y < 3 * square ||
+    snake.head.x > 17 * SQUARE ||
+    snake.head.x < SQUARE ||
+    snake.head.y > 17 * SQUARE ||
+    snake.head.y < 3 * SQUARE ||
     snakeHitItSelf(snake.body, snake.head)
   ) {
     dead.play();
@@ -199,7 +199,7 @@ function game() {
 
   ctx.font = "40px Verdana";
   ctx.fillStyle = "white";
-  ctx.fillText(score, 3 * square, 1.6 * square);
+  ctx.fillText(score, 3 * SQUARE, 1.6 * SQUARE);
 }
 
 function gameSettings() {
